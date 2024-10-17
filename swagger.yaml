@@ -1,11 +1,373 @@
-swagger: '2.0'
+openapi: 3.0.0
 info:
-    version: '1.0.0'
-    title: 'E-Commerce API'
-    description: 'API for managing brands, products, and user cart'
-host: 'localhost:3000'
-schemes:
-    - 'http'
-basePath: '/api'
-produces:
-    - 'application/json'
+  title: Sunglasses Store Endpoints
+  description: Sunglassed store API
+  version: 1.72.1
+servers:
+  - url: https://api.sunglassesstore.com/v1
+tags:
+  - name: Cart
+  - name: Brands
+  - name: Products
+  - name: Brands
+paths:
+  /brands:
+    get:
+      tags:
+        - Brands
+      summary: Brands list
+      description: Returns list of brands
+      operationId: getBrands
+      responses:
+        "201":
+          description: List of brands
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Brand"
+        "400":
+          description: >-
+            The request could not be understood due to malformed syntax or
+            validation error(s).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: >-
+            Accessing a protected resource without authorization
+            or with invalid credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /products:
+    get:
+      tags:
+        - Products
+      summary: Products List
+      description: Get list of products
+      operationId: getProductList
+      responses:
+        "201":
+          description: List of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+        "400":
+          description: >-
+            The request could not be understood due to malformed syntax or
+            validation error(s).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: >-
+            Accessing a protected resource without authorization
+            or with invalid credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /brands/{brand_id}/products:
+    get:
+      tags:
+        - Brands
+      summary: Brand products
+      description: Get brands products
+      operationId: getBrandProudcts
+      parameters:
+        - name: brand_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "201":
+          description: List of brand's products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+        "400":
+          description: >-
+            The request could not be understood due to malformed syntax or
+            validation error(s).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: >-
+            Accessing a protected resource without authorization
+            or with invalid credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /me/cart:
+    get:
+      tags:
+        - Cart
+      summary: Items in cart
+      description: Return List of items in cart
+      operationId: getCart
+      responses:
+        "201":
+          description: List of items in cart
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CartItem"
+        "400":
+          description: >-
+            The request could not be understood due to malformed syntax or
+            validation error(s).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: >-
+            Accessing a protected resource without authorization
+            or with invalid credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags:
+        - Cart
+      summary: Adds to cart
+      description: Adds product to cart
+      operationId: addToCart
+      requestBody:
+        description: The product to add
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productId:
+                  type: string
+                quantity::
+                  type: integer
+        required: true
+      responses:
+        "201":
+          description: The product was successfully added to cart
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CartItem"
+
+        "400":
+          description: >-
+            The request could not be understood due to malformed syntax or
+            validation error(s).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: >-
+            Accessing a protected resource without authorization
+            or with invalid credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /me/cart/{productId}:
+    post:
+      tags:
+        - Cart
+      summary: Update product quantity
+      description: Update a specific product's quantity within cart
+      operationId: updateCart
+      parameters:
+        - name: productId
+          in: path
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: The product to update
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productId:
+                  type: string
+                quantity::
+                  type: integer
+        required: true
+      responses:
+        "201":
+          description: The product was successfully updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  # to-do create cart schema
+                  $ref: "#/components/schemas/CartItem"
+        "400":
+          description: >-
+            The request could not be understood due to malformed syntax or
+            validation error(s).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: >-
+            Accessing a protected resource without authorization
+            or with invalid credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags:
+        - Cart
+      summary: Delete product from cart
+      description: Delete's a specific product's within cart
+      operationId: deleteCartProduct
+      parameters:
+        - name: productId
+          in: path
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: The product to delete
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productId:
+                  type: string
+        required: true
+      responses:
+        "201":
+          description: The product was successfully updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CartItem"
+        "400":
+          description: >-
+            The request could not be understood due to malformed syntax or
+            validation error(s).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: >-
+            Accessing a protected resource without authorization
+            or with invalid credentials.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    ErrorResponse:
+      required:
+        - error
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorDetail"
+    ErrorDetail:
+      required:
+        - detail
+        - id
+        - name
+      type: object
+      properties:
+        status_code:
+          type: integer
+          description: HTTP status code of the error.
+        name:
+          type: string
+          description: Name of error
+        detail:
+          type: string
+          description: Details of error
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Elon Musk
+      # Both properties are required
+      required:
+        - id
+        - name
+    Brand:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Sunny Shades
+      # Both properties are required
+      required:
+        - id
+        - name
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        categoryId:
+          type: string
+        brandId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          format: uuid
+        description:
+          type: string
+          format: uuid
+        price:
+          type: integer
+        imageUrls:
+          type: array
+    CartItem:
+      type: object
+      properties:
+        name:
+          type: string
+        productId:
+          type: string
+          format: uuid
+        price:
+          type: integer
+        quantity:
+          type: integer
